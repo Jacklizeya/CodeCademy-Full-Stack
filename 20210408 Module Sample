@@ -1,0 +1,63 @@
+// 1.js
+
+console.log("start execute module 1")
+const two = require("./two.js")
+const a = 5
+console.log(a)
+
+two.add("1", 1)
+two.add("one", "one")
+two.add("first", "first")
+console.log("module1 is done")
+console.log(two.get())
+console.log("here", two.get(a))
+// we did not import the a object
+// we can not use it
+// but we changed it
+
+// two.js
+
+console.log("start executing module2")
+
+let a = {start: "start"}
+
+// this function will add key-value pair for a
+function add (key, value) {a[key] = value}
+
+add("name", "jack")
+
+function get () {return a}
+
+module.exports = {add, get}
+
+console.log("module2 is done", get())
+
+// 3.js
+const express = require("express")
+const app = express()
+const port = process.env.PORT || 3000
+
+/*
+const four = { 
+    a: {},
+    add: function (key, value) {four.a[key] = value},
+    get: function () {return four.a}
+}
+*/
+
+const two = require("./two.js")
+require ("./1.js")
+two.add("three", "third")
+
+app.get("/", (req, res)=>{res.send(a)})
+
+app.listen(port, ()=>{
+    console.log("I am listening...")
+    //console.log(a)
+}
+)
+
+
+
+ 
+
