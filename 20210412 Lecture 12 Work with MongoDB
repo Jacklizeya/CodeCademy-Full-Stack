@@ -1,0 +1,118 @@
+const MongoClient = require('mongodb').MongoClient;
+
+const dbUrl = 'mongodb://localhost:27017'
+const databaseName = 'fullStackWar'
+
+let connectMongoClient = MongoClient.connect(dbUrl, { useUnifiedTopology: true }) //establish the connection
+// Initial Promise, anything that need to go outside
+
+console.log(connectMongoClient, typeof connectMongoClient)
+
+// let getDb = promise.then( return new object as promise.resolve)  
+let getDb = connectMongoClient.then((client) => { console.log("connected"); //create JS local copy
+    return client.db(databaseName)
+})
+// The following promise 
+
+
+function getCollection(name) {
+    return getDb.then((db) => { return db.collection(name)})
+}
+
+function close() {
+    return connectMongoClient.then((client) => {
+        return client.close()
+    })
+}
+
+module.exports = {
+    getDb, // the Promise with resolved:database 
+    getCollection, // the collection
+    close
+}
+
+//***************Create
+
+const db = require('./db');
+
+db.getCollection('soldiers').then((soldiers) => {
+    console.log('Inserting a document!')
+    return soldiers.insertOne({
+        nickname: 'Wido',
+        score: '50'
+    })
+})
+.then((insertResult) => {
+    console.log("Document has been inserted")
+    console.log(insertResult)
+    db.close()
+})
+
+//****************Read
+const { ObjectId } = require('mongodb');
+const db = require('./db');
+
+db.getCollection('soldiers').then((soldiers) => {
+    return soldiers.findOne({
+        _id: ObjectId("600b07955c49ec3ea29b11ea")
+    })
+    .then((result) => {
+        console.log(result)
+    })    
+})
+.then(() => {
+    db.close()
+})
+
+//*****************Update
+const db = require('./db');
+
+db.getCollection('soldiers').then((soldiers) => {
+    return soldiers.findOne({
+        nickname: 'JO'
+    })
+    .then((result) => {
+        return result._id    
+    })
+    .then((id) => {
+        return soldiers.updateOne({_id: id}, { $set: {score: 12 }})
+    })
+})
+.then(() => {
+    db.close()
+})
+
+// This is just an action
+// We want to make it an update function
+
+
+//*****************Delete
+const db = require('./db');
+
+db.getCollection('soldiers').then((soldiers) => {
+    return soldiers.findOne({
+        nickname: 'Steve'
+    })
+    .then((result) => {
+        return result._id    
+    })
+    .then((id) => {
+        console.log('deleting document id', id)
+        return soldiers.deleteOne({_id: id})
+    })
+})
+.then(() => {
+    db.close()
+})
+
+
+
+
+
+
+
+
+
+
+
+
