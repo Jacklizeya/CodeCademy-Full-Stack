@@ -3,12 +3,15 @@ const MongoClient = require("mongodb").MongoClient
 const dburl = "mongodb://localhost:27017"
 const databaseName = "fullStackWar"
 
-let MongoClientPromise = MongoClient.connect(dburl, {useNewUrlParser: true , useUnifiedTopology: true})
+let MongoClientPromise = MongoClient.
+connect(dburl, {useNewUrlParser: true , useUnifiedTopology: true})
 
 let databasePromise = MongoClientPromise.
-then((client)=>{/*console.log("connected");*/ return client.db(databaseName)})
+then((client)=>{/*console.log("connected");*/ 
+return client.db(databaseName)})
 
-async function close() {MongoClientPromise.then((Mongoclient)=>{return Mongoclient.close()})}
+async function close() {MongoClientPromise.
+then((Mongoclient)=>{return Mongoclient.close()})}
 
 async function create_collectionPromise(collectionName) {
     database = await databasePromise
@@ -20,15 +23,11 @@ async function createContact(nickname, score) {
     let soldierToCreate = {nickname, score}
     let soldierscollection = await create_collectionPromise("soldiers")
     let insertResult = await soldierscollection.insertOne(soldierToCreate)
-    return insertResult.ops[0]._id     // Even you have return, it is part of promise
+    return insertResult.ops[0]._id     
+    // Even you have return, it is part of promise
 }
 
 async function listAll() {
     let soldierscollection = await create_collectionPromise("soldiers")
     let cursor = /*await*/ soldierscollection.find({})
     return cursor.toArray()   // promise{resolved: cursor.toArray} 
-}
-
-
-createContact("JO", "80").then((result)=>{console.log(result); close() })
-listAll().then((result)=>{console.log(result); close() })
