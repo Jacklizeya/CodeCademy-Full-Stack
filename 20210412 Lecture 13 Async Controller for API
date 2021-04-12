@@ -1,7 +1,3 @@
-// 20210412 Tech Lecture 13
-// Async controller for API
-// Use lcoal MongoDb for data storage
-
 const MongoClient = require("mongodb").MongoClient
 
 const dburl = "mongodb://localhost:27017"
@@ -15,7 +11,9 @@ then((client)=>{/*console.log("connected");*/ return client.db(databaseName)})
 async function close() {MongoClientPromise.then((Mongoclient)=>{return Mongoclient.close()})}
 
 async function create_collectionPromise(collectionName) {
-    return await databasePromise.then((db)=>{return db.collection(collectionName)})  
+    database = await databasePromise
+    collection = await database.collection(collectionName)
+    return collection
 }  // if I remove async and await, it will execute immediately
 
 async function createContact(nickname, score) {
@@ -32,7 +30,5 @@ async function listAll() {
 }
 
 
-createContact("Steve", "80").then((result)=>{console.log(result); close()})
-listAll().then((result)=>{console.log(result); close()})
-
-
+createContact("JO", "80").then((result)=>{console.log(result); close() })
+listAll().then((result)=>{console.log(result); close() })
