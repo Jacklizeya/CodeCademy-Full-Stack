@@ -31,3 +31,10 @@ async function listAll() {
     let soldierscollection = await create_collectionPromise("soldiers")
     let cursor = /*await*/ soldierscollection.find({})
     return cursor.toArray()   // promise{resolved: cursor.toArray} 
+}
+
+
+createContact("JO", "80").then((result)=>{console.log(result); close() })
+listAll().then((result)=>{console.log(result); close() })
+
+
