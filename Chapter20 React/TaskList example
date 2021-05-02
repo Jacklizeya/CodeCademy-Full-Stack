@@ -1,0 +1,55 @@
+import React, {useState} from "react"; // hook, not component here
+import NewTask from "../Presentational/NewTask";
+import TasksList from "../Presentational/TasksList";
+
+export default function AppFunction () {
+    const [newTask, setNewTask] = useState({})
+    const [allTasks, setAllTasks] = useState([])
+
+
+
+
+
+
+
+
+    const handleChange = ({target}) => {
+        const {name, value} = target
+        setNewTask(()=> ({[name]: value, id:Date.now()}))
+    } // have to add () before {}, otherwise JS get lost
+    // spread operator has the overwrite ability, cover old data
+
+    const handleSubmit = (event) => { 
+        event.preventDefault(); 
+        // what is the point of this?
+        if (!newTask.title) return;
+        setAllTasks(() => ([newTask, ...allTasks])); // this is the simpleast way, manipulate variable directily
+//      setAllTasks((prevAllTasks) => ([newTask, ...prevAllTasks])); 
+        // [b] => [a, b], I have access to all variables in this 
+        setNewTask(()=> {return {}});
+      }
+
+    const handleDelete = (taskIdToRemove) => {
+        setAllTasks(() => allTasks.filter((task) => task.id !== taskIdToRemove) )
+        // above is the simplest way, manipulate the variable directly. 
+        // If you put a variable there, it will be the parameter representing current state
+//        setAllTasks((prevAllTasks) => prevAllTasks.filter((task) => task.id !== taskIdToRemove) )
+      }
+
+
+    return (
+        <main>
+          <h1>Tasks</h1>
+          <NewTask
+            newTask={newTask}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+          />
+          <TasksList
+            allTasks={allTasks}
+            handleDelete={handleDelete}
+          />
+        </main>
+      );
+
+}
