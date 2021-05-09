@@ -1,0 +1,48 @@
+const {compose, pipe} = require ('lodash/fp')
+// Level 1
+let input = "   Javascript " 
+let output = "<div>" + input.trim().toLowerCase() + "</div>"
+console.log("no function way of doing things", output)
+
+// Level 2
+function h(x) {return x.toLowerCase()}
+function f(x) {return x.trim()}
+function g(x) {return `<div>${x}</div>`}
+console.log ("old way of working", g(f(h(input))))
+
+// Level 3
+// compose, just reference, do NOT invoke
+const transformByCompose = compose(g, f, h)
+console.log ("transformByCompose", (transformByCompose(input)))
+
+const transformByPiping = pipe(h, f, g)
+console.log ("transformByPiping ", (transformByPiping(input)))
+// Level 4
+function h(x) {return x.toLowerCase()}
+function f(x) {return x.trim()}
+function g1(x) {return `<div>${x}</div>`}
+function g2(x) {return `<span>${x}</span>`}
+console.log ("old way of working", g1(f(h(input))))
+console.log ("old way of working", g2(f(h(input))))
+
+// want to combine g1, g2
+function h(x) {return x.toLowerCase()}
+function f(x) {return x.trim()}
+function g(y, x) {return `<${y}>${x}</${y}>`} //typical like g("hello", "div")
+transformCurry = pipe(h, f, g) 
+console.log("transformCurry doesnot work", transformCurry(input))
+// !!! problem here, 1. transform only accept function
+// !!! problem here, 2. pipe only pass one parameters to next
+// ??? how to make g(x,y){return x*y} a function that only accept one parameter
+function goutside(y) {return function(x) {return `<${y}>${x}</${y}>`}}
+transformCurry = pipe(h, f, goutside("span"))
+console.log("transformCurry will work", transformCurry(input))
+
+// in a short form: f = a => b => a + b
+// instead of       f (a, b) => a + b
+// Finalformt
+const hFinal = (x) =>    x.toLowerCase()
+const fFinal = (x) =>    x.trim()
+const gFinal = y => x => `<${y}>${x}</${y}>` //typical like g("hello", "div")
+transformCurryFinal = pipe(hFinal, fFinal, gFinal("div")) 
+console.log("final", transformCurryFinal(input))
